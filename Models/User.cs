@@ -23,6 +23,8 @@ namespace TicketsApi.Models
 
         public string? UpdatedAt { get; set; }
 
+        public User() { }
+
         public User(string username, string email, string password, string role)
             : this(username, email, password, role, UserStatus.Active)
         {
