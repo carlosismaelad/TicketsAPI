@@ -23,9 +23,13 @@ namespace TicketsApi.Models
 
         public string? UpdatedAt { get; set; }
 
-        public User() { }
-
         public User(string username, string email, string password, string role)
+            : this(username, email, password, role, UserStatus.Active)
+        {
+
+        }
+
+        public User(string username, string email, string password, string role, UserStatus status)
         {
             if (string.IsNullOrWhiteSpace(username))
                 throw new ArgumentException("O campo nome não pode ser nulo ou vazio", nameof(username));
@@ -40,6 +44,7 @@ namespace TicketsApi.Models
             Email = email;
             Password = password;
             Role = role;
+            Status = status;
             CreatedAt = GetBrazilTime();
         }
 
