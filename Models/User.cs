@@ -19,9 +19,9 @@ namespace TicketsApi.Models
 
         [Required]
         public UserStatus Status { get; set; } = UserStatus.Active;
-        public string CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        public string? UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public User() { }
 
@@ -47,19 +47,12 @@ namespace TicketsApi.Models
             Password = password;
             Role = role;
             Status = status;
-            CreatedAt = GetBrazilTime();
+            CreatedAt = DateTime.UtcNow;
         }
 
         public void SetUpdatedAt()
         {
-            UpdatedAt = GetBrazilTime();
-        }
-
-        private string GetBrazilTime()
-        {
-            var BrazilTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-            var FormatedBrazilTimeZone = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, BrazilTimeZone);
-            return FormatedBrazilTimeZone.ToString("dd/MM/yyyy HH:mm");
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }

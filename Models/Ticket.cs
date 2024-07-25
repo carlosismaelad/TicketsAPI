@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using TicketsApi.Models.Enums;
 
 namespace TicketsApi.Models
@@ -27,9 +26,9 @@ namespace TicketsApi.Models
         [Required]
         public TicketStatus Status { get; set; } = TicketStatus.New;
 
-        public string CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        public string? UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public Ticket(string title, string analyst, string client, string numberTicket, string description)
             : this(title, analyst, client, numberTicket, description, TicketStatus.New)
@@ -59,19 +58,12 @@ namespace TicketsApi.Models
             NumberTicket = numberTicket;
             Description = description;
             Status = status;
-            CreatedAt = GetBrazilTime();
+            CreatedAt = DateTime.UtcNow;
         }
 
         public void SetUpdatedAt()
         {
-            UpdatedAt = GetBrazilTime();
-        }
-
-        private string GetBrazilTime()
-        {
-            var BrazilTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-            var FormatedBrazilTimeZone = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, BrazilTimeZone);
-            return FormatedBrazilTimeZone.ToString("dd/MM/yyyy HH:mm");
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }
