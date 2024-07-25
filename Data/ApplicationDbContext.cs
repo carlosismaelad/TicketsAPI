@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TicketsApi.Models;
 
@@ -45,42 +39,6 @@ namespace TicketsApi.Data
                 entity.Property(u => u.CreatedAt).IsRequired();
                 entity.Property(u => u.UpdatedAt).IsRequired(false);
             });
-
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Username = "Batman",
-                    Email = "batman@example.com",
-                    Password = HashPassword("AdminPassword123"),
-                    Role = "Admin",
-                    CreatedAt = DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm")
-                },
-                new User
-                {
-                    Id = 2,
-                    Username = "Robin",
-                    Email = "robin@example.com",
-                    Password = HashPassword("UserPassword123"),
-                    Role = "Default",
-                    CreatedAt = DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm")
-                }
-            );
         }
-
-        protected string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                foreach (var b in bytes)
-                {
-                    builder.Append(b.ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
-
     }
 }
