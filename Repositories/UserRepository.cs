@@ -3,6 +3,7 @@ using TicketsApi.Data;
 using TicketsApi.Models;
 using TicketsApi.Models.Enums;
 using TicketsApi.Repositories.Interfaces;
+using BC = BCrypt.Net.BCrypt;
 
 namespace TicketsApi.Repositories
 {
@@ -17,6 +18,7 @@ namespace TicketsApi.Repositories
 
         public async Task<User> CreateAsync(User user)
         {
+            user.Password = BC.HashPassword(user.Password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;
@@ -70,7 +72,7 @@ namespace TicketsApi.Repositories
             }
             existingUser.Username = user.Username;
             existingUser.Email = user.Email;
-            existingUser.Password = user.Password;
+            existingUser.Password = BC.HashPassword(user.Password);
             existingUser.Role = user.Role;
             existingUser.Status = user.Status;
             existingUser.SetUpdatedAt();
@@ -94,20 +96,15 @@ namespace TicketsApi.Repositories
         }
 
         // Método para teste de autenticação
-        public Task<User> AuthenticateAsync(string username, string password)
+        public async Task<User> AuthenticateAsync(string email, string password)
         {
-            var users = new List<User>
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            if (user != null && BC.Verify(password, user.Password))
             {
-                new User("Batman", "batman@mail.com", "securepassword123", "Admin"),
-                new User("Robin", "robin@mail.com", "securepassword456", "Default")
-            };
-
-            var user = users.FirstOrDefault(x =>
-                x.Username.Equals(username, StringComparison.OrdinalIgnoreCase) &&
-                x.Password == password
-            );
-
-            return Task.FromResult(user);
+                return user;
+            }
+            return null;
         }
 
     }
