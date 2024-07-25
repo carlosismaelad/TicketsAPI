@@ -18,26 +18,34 @@ namespace TicketsApi.Data
             modelBuilder.Entity<Ticket>(entity =>
             {
                 entity.HasKey(t => t.Id);
+                entity.Property(t => t.Id)
+                    .ValueGeneratedOnAdd();
                 entity.Property(t => t.Title).IsRequired();
                 entity.Property(t => t.Analyst).IsRequired();
                 entity.Property(t => t.Client).IsRequired();
                 entity.Property(t => t.NumberTicket).IsRequired();
-                entity.Property(t => t.Description).HasColumnType("text").IsRequired();
+                entity.Property(t => t.Description).IsRequired().HasColumnType("text");
                 entity.Property(t => t.Status).IsRequired().HasConversion<int>();
-                entity.Property(t => t.CreatedAt).IsRequired();
-                entity.Property(t => t.UpdatedAt).IsRequired(false);
+                entity.Property(t => t.CreatedAt).IsRequired().HasColumnType("timestamp");
+                entity.Property(t => t.UpdatedAt).IsRequired(false).HasColumnType("timestamp");
+
+
 
             });
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(u => u.Id);
+                entity.Property(u => u.Id)
+                    .ValueGeneratedOnAdd();
                 entity.Property(u => u.Username).IsRequired();
                 entity.Property(u => u.Email).IsRequired();
                 entity.Property(u => u.Password).IsRequired();
                 entity.Property(u => u.Role).IsRequired();
                 entity.Property(u => u.Status).IsRequired().HasConversion<int>();
-                entity.Property(u => u.CreatedAt).IsRequired();
-                entity.Property(u => u.UpdatedAt).IsRequired(false);
+                entity.Property(u => u.CreatedAt).IsRequired().HasColumnType("timestamp");
+                entity.Property(u => u.UpdatedAt).IsRequired(false).HasColumnType("timestamp");
+
+
             });
         }
     }
