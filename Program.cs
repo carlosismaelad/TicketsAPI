@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configuração do DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Adiciona o serviço TokenService
 builder.Services.AddSingleton<TokenService>();
