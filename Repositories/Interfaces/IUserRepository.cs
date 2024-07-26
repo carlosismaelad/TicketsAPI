@@ -11,5 +11,6 @@ namespace TicketsApi.Repositories.Interfaces
         Task<User> UpdateAsync(User user);
         Task<User> DeleteAsync(int id);
         Task<User>? AuthenticateAsync(string username, string email);
+        Task<User> GetUserByEmailAsync(string email);
     }
 }

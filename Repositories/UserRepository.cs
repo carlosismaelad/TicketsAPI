@@ -107,5 +107,10 @@ namespace TicketsApi.Repositories
             return null;
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        }
+
     }
 }
