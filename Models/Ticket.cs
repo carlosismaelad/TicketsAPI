@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using Microsoft.JSInterop;
 using TicketsApi.Models.Enums;
 
 namespace TicketsApi.Models
@@ -30,11 +32,13 @@ namespace TicketsApi.Models
 
         public DateTime? UpdatedAt { get; set; }
 
+
         public Ticket(string title, string analyst, string client, string numberTicket, string description)
             : this(title, analyst, client, numberTicket, description, TicketStatus.New)
         {
         }
 
+        [JsonConstructor]
         public Ticket(string title, string analyst, string client, string numberTicket, string description, TicketStatus status)
         {
             if (string.IsNullOrWhiteSpace(title))
