@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -9,6 +10,7 @@ namespace TicketsApi.Services
     public class TokenService
     {
         private readonly IConfiguration _configuration;
+        private static readonly ConcurrentDictionary<string, DateTime> RevokedTokens = new();
 
         public TokenService(IConfiguration configuration)
         {
@@ -31,6 +33,22 @@ namespace TicketsApi.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public void RevokeToken(string token)
+        {
+            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            var expiryDate = jwtToken.ValidTo;
+            RevokedTokens[token] = expiryDate;
+        }
+
+        public bool IsTokenRevoked(string token)
+        {
+            if (RevokedTokens.TryGetValue(token, out var expiryDate))
+            {
+                return DateTime.UtcNow < expiryDate;
+            }
+            return false;
         }
     }
 }
