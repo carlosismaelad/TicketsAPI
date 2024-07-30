@@ -88,8 +88,7 @@ namespace TicketsApi.Repositories
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                user.Status = UserStatus.Disable;
-                _context.Entry(user).State = EntityState.Modified;
+                _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
             return user;
