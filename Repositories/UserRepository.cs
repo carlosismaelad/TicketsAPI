@@ -24,16 +24,6 @@ namespace TicketsApi.Repositories
             return user;
         }
 
-        public async Task<User> ReadAsync(string username)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(user => user.Username == username);
-            if (user == null)
-            {
-                throw new KeyNotFoundException($"Usuário {username} não encontrado.");
-            }
-            return user;
-        }
-
         public async Task<IEnumerable<User>> ReadAllAsync()
         {
             return await _context.Users
@@ -41,25 +31,14 @@ namespace TicketsApi.Repositories
                 .ToListAsync();
         }
 
-        // Implementa uma busca geral baseada pelo termo no input
-        public async Task<IEnumerable<User>> ReadAllByTermAsync(string searchTerm)
+        public async Task<User> ReadByUsernameAsync(string username)
         {
-            // Normaliza o searchTerm para busca case insensitive
-            string normalizedSearch = searchTerm.ToLower();
-
-            var users = await _context.Users.ToListAsync();
-
-            var filteredUsers = users.Where(user =>
-                    user.Username.ToLower().Contains(normalizedSearch) ||
-                    user.Email.ToLower().Contains(normalizedSearch) ||
-                    user.Status.ToString().ToLower().Contains(normalizedSearch)
-                );
-
-            if (!filteredUsers.Any())
+            var user = await _context.Users.FirstOrDefaultAsync(user => user.Username == username);
+            if (user == null)
             {
-                throw new KeyNotFoundException($"Nenhum usuário encontrado com o termo '{normalizedSearch}'");
+                throw new KeyNotFoundException($"Usuário {username} não encontrado.");
             }
-            return users;
+            return user;
         }
 
         public async Task<User> UpdateAsync(User user)
@@ -91,6 +70,27 @@ namespace TicketsApi.Repositories
                 await _context.SaveChangesAsync();
             }
             return user;
+        }
+
+        // Implementa uma busca geral baseada pelo termo no input
+        public async Task<IEnumerable<User>> ReadAllByTermAsync(string searchTerm)
+        {
+            // Normaliza o searchTerm para busca case insensitive
+            string normalizedSearch = searchTerm.ToLower();
+
+            var users = await _context.Users.ToListAsync();
+
+            var filteredUsers = users.Where(user =>
+                    user.Username.ToLower().Contains(normalizedSearch) ||
+                    user.Email.ToLower().Contains(normalizedSearch) ||
+                    user.Status.ToString().ToLower().Contains(normalizedSearch)
+                );
+
+            if (!filteredUsers.Any())
+            {
+                throw new KeyNotFoundException($"Nenhum usuário encontrado com o termo '{normalizedSearch}'");
+            }
+            return users;
         }
 
         // Método para teste de autenticação
