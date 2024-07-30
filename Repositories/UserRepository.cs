@@ -47,16 +47,15 @@ namespace TicketsApi.Repositories
             // Normaliza o searchTerm para busca case insensitive
             string normalizedSearch = searchTerm.ToLower();
 
-            var users = await _context.Users
-                .Where(user =>
+            var users = await _context.Users.ToListAsync();
+
+            var filteredUsers = users.Where(user =>
                     user.Username.ToLower().Contains(normalizedSearch) ||
                     user.Email.ToLower().Contains(normalizedSearch) ||
                     user.Status.ToString().ToLower().Contains(normalizedSearch)
+                );
 
-
-                )
-                .ToListAsync();
-            if (!users.Any())
+            if (!filteredUsers.Any())
             {
                 throw new KeyNotFoundException($"Nenhum usuário encontrado com o termo '{normalizedSearch}'");
             }
