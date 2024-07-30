@@ -20,6 +20,7 @@ namespace TicketsApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Default")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -35,6 +36,7 @@ namespace TicketsApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Default")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -55,7 +57,7 @@ namespace TicketsApi.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin, Default")]
         public async Task<IActionResult> Create([FromBody] Ticket ticket)
         {
             try
@@ -70,21 +72,19 @@ namespace TicketsApi.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, [FromBody] Ticket ticket)
+        public async Task<IActionResult> Update([FromBody] Ticket ticket)
         {
-            if (id != ticket.Id)
-            {
-                return BadRequest("ID do ticket não corresponde.");
-            }
+            if (!User.IsInRole("Admin"))
+                return Forbid("Você não tem permissão para esta ação.");
 
             try
             {
                 var updatedTicket = await _ticketRepository.UpdateAsync(ticket);
                 if (updatedTicket == null)
                 {
-                    return NotFound($"Ticket com id {id} não encontrado.");
+                    return NotFound($"Ticket com id {ticket.Id} não encontrado.");
                 }
 
                 return Ok(updatedTicket);
@@ -96,19 +96,22 @@ namespace TicketsApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromBody] Ticket ticket)
         {
+            if (!User.IsInRole("Admin"))
+                return Forbid("Você não tem permissão para esta ação.");
+
             try
             {
-                var ticket = await _ticketRepository.DeleteAsync(id);
-                if (ticket == null)
+                var deltedTicket = await _ticketRepository.DeleteAsync(ticket.Id);
+                if (deltedTicket == null)
                 {
-                    return NotFound($"Ticket com id {id} não encontrado.");
+                    return NotFound($"Ticket com id {ticket.Id} não encontrado.");
                 }
 
-                return Ok($"Ticket com id {id} foi fechado.");
+                return Ok($"Excluído com sucesso!");
             }
             catch (Exception ex)
             {
@@ -116,8 +119,9 @@ namespace TicketsApi.Controllers
                 return StatusCode(500, "Erro interno do servidor.");
             }
         }
+
         [HttpGet("search")]
-        [Authorize]
+        [Authorize(Roles = "Admin, Default")]
         public async Task<IActionResult> Search([FromQuery] string term)
         {
             try

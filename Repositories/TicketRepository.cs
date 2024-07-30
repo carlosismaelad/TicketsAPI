@@ -44,21 +44,22 @@ namespace TicketsApi.Repositories
         {
             string normalizedSearch = searchTerm.ToLower();
 
-            var tickets = await _context.Tickets
-                .Where(ticket =>
+            var tickets = await _context.Tickets.ToListAsync();
+
+            var filteredTickets = tickets.Where(ticket =>
                     ticket.Title.ToLower().Contains(normalizedSearch) ||
                     ticket.Analyst.ToLower().Contains(normalizedSearch) ||
                     ticket.Client.ToLower().Contains(normalizedSearch) ||
                     ticket.NumberTicket.ToLower().Contains(normalizedSearch) ||
                     ticket.Description.ToLower().Contains(normalizedSearch) ||
                     ticket.Status.ToString().ToLower().Contains(normalizedSearch)
-                )
-                .ToListAsync();
-            if (!tickets.Any())
+                );
+
+            if (!filteredTickets.Any())
             {
                 throw new KeyNotFoundException($"Nenhum ticket encontrado com o termo '{normalizedSearch}'");
             }
-            return tickets;
+            return filteredTickets;
         }
 
         public async Task<Ticket> UpdateAsync(Ticket ticket)
@@ -88,8 +89,7 @@ namespace TicketsApi.Repositories
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket != null)
             {
-                ticket.Status = TicketStatus.Closed;
-                _context.Entry(ticket).State = EntityState.Modified;
+                _context.Tickets.Remove(ticket);
                 await _context.SaveChangesAsync();
             }
             return ticket;
