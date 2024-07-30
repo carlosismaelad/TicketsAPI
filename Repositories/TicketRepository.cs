@@ -22,7 +22,7 @@ namespace TicketsApi.Repositories
             return ticket;
         }
 
-        public async Task<Ticket> ReadAsync(int id)
+        public async Task<Ticket> ReadByIdAsync(int id)
         {
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null)

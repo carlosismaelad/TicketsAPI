@@ -41,7 +41,7 @@ namespace TicketsApi.Controllers
         {
             try
             {
-                var ticket = await _ticketRepository.ReadAsync(id);
+                var ticket = await _ticketRepository.ReadByIdAsync(id);
                 return Ok(ticket);
             }
             catch (KeyNotFoundException ex)
