@@ -89,7 +89,7 @@ namespace TicketsApi.Repositories
 
             if (!filteredUsers.Any())
             {
-                throw new KeyNotFoundException($"Nenhum usuário encontrado com o termo '{normalizedSearch}'");
+                throw new KeyNotFoundException($"Nenhum usuário encontrado com o termo informado.");
             }
             return filteredUsers;
         }
