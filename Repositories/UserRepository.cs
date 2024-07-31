@@ -83,14 +83,15 @@ namespace TicketsApi.Repositories
             var filteredUsers = users.Where(user =>
                     user.Username.ToLower().Contains(normalizedSearch) ||
                     user.Email.ToLower().Contains(normalizedSearch) ||
-                    user.Status.ToString().ToLower().Contains(normalizedSearch)
+                    user.Status.ToString().ToLower().Contains(normalizedSearch) ||
+                    user.Role.ToLower().Contains(normalizedSearch)
                 );
 
             if (!filteredUsers.Any())
             {
                 throw new KeyNotFoundException($"Nenhum usuário encontrado com o termo '{normalizedSearch}'");
             }
-            return users;
+            return filteredUsers;
         }
 
         // Método para teste de autenticação
